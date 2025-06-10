@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Flutter Web to GitHub Pages
 
 on:
   push:
@@ -6,26 +6,24 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: '14'
+          flutter-version: "stable"
 
       - name: Install dependencies
-        run: npm install
+        run: flutter pub get
 
-      - name: Build the project
-        run: npm run build
+      - name: Build web
+        run: flutter build web
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./src
+          publish_dir: ./build/web
